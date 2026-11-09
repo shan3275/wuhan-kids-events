@@ -1,0 +1,57 @@
+name: hbstm-schedule
+
+on:
+  schedule:
+    # 北京时间周日 20:00（UTC 12:00）：刷新当月活动日程，新文章才推月报
+    - cron: '0 12 * * 0'
+    # 北京时间周一 11:50（UTC 03:50）：12:00 线上抢当周课程
+    - cron: '50 3 * * 1'
+    # 北京时间每天 8:30（UTC 00:30）：当天现场取票
+    - cron: '30 0 * * *'
+  workflow_dispatch:
+    inputs:
+      hbstm:
+        description: '重新整理当月活动日程'
+        type: boolean
+        default: true
+      remind:
+        description: '若此刻在提醒窗口内，推送预约提醒'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  schedule:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Refresh and remind
+        env:
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            args=""
+            [ "${{ github.event.inputs.hbstm }}" = "true" ] && args="$args --hbstm"
+            [ "${{ github.event.inputs.remind }}" = "true" ] && args="$args --remind"
+            python pipeline.py $args
+          elif [ "${{ github.event.schedule }}" = "0 12 * * 0" ]; then
+            python pipeline.py --hbstm
+          else
+            python pipeline.py --remind
+          fi
+      - name: Persist schedule state
+        run: |
+          git config user.name "activity-bot"
+          git config user.email "activity-bot@users.noreply.github.com"
+          git add state/hbstm.json
+          git commit -m "chore: update hbstm schedule" || echo "no state change"
+          git push

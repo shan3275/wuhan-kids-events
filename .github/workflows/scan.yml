@@ -1,0 +1,49 @@
+name: weekly-scan
+
+on:
+  schedule:
+    # 北京时间 周日/周三 19:30（UTC 11:30）：
+    # 周日傍晚卡在省科技馆周一 12:00 抢课之前，周三傍晚汇总周末活动
+    - cron: '30 11 * * 0,3'
+  workflow_dispatch:
+    inputs:
+      init:
+        description: '首次部署勾选此项：把当前所有内容标记为已见，不推送（避免首跑推送一堆旧活动）'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write  # 用于回写 state/seen.json 去重状态
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run scan
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # 可选：用 DeepSeek 等兼容端点时配置这三个
+          ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+          ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
+          ACTIVITY_MODEL: ${{ secrets.ACTIVITY_MODEL }}
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+        run: |
+          if [ "${{ github.event.inputs.init }}" = "true" ]; then
+            python pipeline.py --init
+          else
+            python pipeline.py
+          fi
+      - name: Persist seen state
+        run: |
+          git config user.name "activity-bot"
+          git config user.email "activity-bot@users.noreply.github.com"
+          git add state/seen.json
+          git commit -m "chore: update seen state" || echo "no state change"
+          git push

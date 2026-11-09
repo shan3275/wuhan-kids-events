@@ -1,0 +1,8 @@
+__pycache__/
+.venv/
+*.pyc
+.env
+logs/
+.cache/
+state/seen.json
+state/hbstm.json

@@ -1,0 +1,83 @@
+{
+  "home": {
+    "label": "光谷广场",
+    "note": "改成你家小区或最近地铁站的名字，AI 会据此判断距离是否合适（精确坐标测距留到 v2）"
+  },
+  "child": {
+    "age": 7,
+    "age_min": 6,
+    "age_max": 9
+  },
+  "max_distance_km": 18,
+  "max_articles_per_run": 20,
+  "max_article_text_chars": 2500,
+  "exclude_title_keywords": ["获奖", "开馆", "喜报", "表彰", "通车", "招聘", "中标", "采购公告", "废标", "成交结果", "招标", "验收", "调研", "研讨会", "论文", "资助", "学术年会", "内控"],
+  "url_blacklist": ["zhihu.com"],
+  "sources": {
+    "direct": [
+      {
+        "name": "湖北省图书馆-楚天书房活动预告",
+        "url": "https://www.library.hb.cn/gywm/ctsf/hdyg/",
+        "venue": "光谷书房"
+      },
+      {
+        "name": "湖北省科技馆官网首页",
+        "url": "https://www.hbstm.org.cn/",
+        "venue": "湖北省科技馆"
+      }
+    ],
+    "searches": [
+      {
+        "venue": "光谷书房",
+        "queries": [
+          "光谷书房 活动报名",
+          "光谷书房 亲子活动 招募",
+          "site:mp.weixin.qq.com 光谷书房 活动报名"
+        ]
+      },
+      {
+        "venue": "光谷图书馆",
+        "queries": [
+          "光谷图书馆 活动 报名",
+          "光谷文化中心 亲子活动"
+        ]
+      },
+      {
+        "venue": "光谷美术馆",
+        "queries": [
+          "光谷美术馆 展览 公教活动",
+          "光谷美术馆 少儿 活动"
+        ]
+      },
+      {
+        "venue": "湖北省科技馆",
+        "queries": [
+          "湖北省科技馆 活动 报名",
+          "湖北省科技馆 课程 预约",
+          "site:hbstm.org.cn 活动",
+          "site:hbkx.org.cn 湖北省科技馆"
+        ]
+      },
+      {
+        "venue": "中国建筑科技馆",
+        "queries": [
+          "中国建筑科技馆 活动 招募",
+          "中国建筑科技馆 夜宿 报名",
+          "中国建筑科技馆 研学 亲子"
+        ]
+      }
+    ]
+  },
+  "hbstm_schedule": {
+    "index_url": "https://www.hbstm.org.cn/webart/WebArtIdx/117/",
+    "online_remind": "11:50",
+    "onsite_remind": "08:30",
+    "remind_window_minutes": 90
+  },
+  "manual_weekly_checklist": [
+    "微信公众号「光谷书房」：看本周菜单栏的报名链接（活动前某日 19:30 开启）",
+    "微信公众号「湖北省科学技术馆」：周日 19:01 发下周课表，周一 12:00 抢课程",
+    "微信公众号「光谷图书馆」「光谷美术馆」：每周一放下一周预约名额",
+    "微信公众号「中国建筑科技馆」「地大逸夫博物馆」：夜宿/研学招募贴"
+  ]
+}
