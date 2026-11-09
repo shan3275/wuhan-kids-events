@@ -6,3 +6,4 @@ logs/
 .cache/
 state/seen.json
 state/hbstm.json
+output/
