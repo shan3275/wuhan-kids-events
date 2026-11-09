@@ -39,7 +39,7 @@ vi .env   # 填入 FEISHU_WEBHOOK、FEISHU_SECRET；LLM 凭证二选一：
 
 # 5. 定时任务：阿里云服务器默认北京时间
 crontab -e
-# 加入下面三行：
+# 加入这几行：
 # 30 19 * * 0,3 /opt/wuhan-kids-events/run.sh            # 周日/周三 19:30 扫描
 # 0 8 * * 1 /opt/wuhan-kids-events/run.sh                # 周一 8:00 补扫
 # 0 20 * * 0 /opt/wuhan-kids-events/run.sh --hbstm       # 周日 20:00 刷新省科技馆当月日程
@@ -55,7 +55,7 @@ crontab -e
 
 ## 部署方式二：GitHub Actions（免费，无需服务器）
 
-> 缺点：Actions 跑在境外机房，个别国内站点可能拦截；去重状态靠 git 回写。
+> 缺点：Actions 跑在境外机房，个别国内站点可能拦截。`state/` 和 `output/` 在 `.gitignore` 里，Actions 每次都是新环境，去重和当月课表不会留到下一次。要稳定去重和预约提醒，用上面的自有服务器。
 
 ### 1. 建飞书机器人，拿 webhook
 
